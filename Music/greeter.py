@@ -57,10 +57,11 @@ class Greeter:
         dark_mode_button.pack(pady=10)
 
     def start_app(self):
-        if self.root.winfo_exists():  # Check if the root window is still alive
-            self.root.destroy()  # Close the Greeter window
-            app = Toplevel()  # Create a Toplevel window without a master
+        if self.root.winfo_exists():
+            self.root.withdraw()
+            app = Toplevel() 
             music_app = MusicSuggestionApp(app, self.api_key,dark_mode=self.dark_mode)
+            
 
     def toggle_dark_mode(self):
         self.dark_mode = not self.dark_mode
@@ -73,7 +74,7 @@ class Greeter:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    api_key = "AIzaSyB0ejTmLHUMmtqFUtn6kJmZ4M9CBkxYpO0"  # Replace with your actual YouTube API key
+    api_key = "AIzaSyB0ejTmLHUMmtqFUtn6kJmZ4M9CBkxYpO0"
     greeter = Greeter(root, api_key)
     root.mainloop()
 
