@@ -13,6 +13,7 @@ class MusicSuggestionApp:
         self.root = root
         self.DEVELOPER_KEY = DEVELOPER_KEY
         self.dark_mode = dark_mode
+        self.suggestions_window = None
 
         self.song_label = Label(self.root, text="")
         self.song_label.pack(pady=10)
@@ -97,7 +98,7 @@ class MusicSuggestionApp:
             'q': search_query,
             'type': 'playlist',
             'part': 'snippet',
-            'maxResults': 3
+            'maxResults': 10
         }
 
         try:
@@ -198,31 +199,49 @@ class MusicSuggestionApp:
         self.style.set_theme(theme_name)
         self.root.configure(bg="#272829" if self.dark_mode else "white")
 
-    def dislike_song(self, index):
-        if 0 <= index < len(self.video_data):
-            disliked_song = self.video_data.pop(index)
-            self.open_disliked_song_window(disliked_song)
-            self.suggest_random_song()
+    def dislike_song(self, i):
 
-    def open_disliked_song_window(self, song):
-        disliked_window = Toplevel(self.root)
-        disliked_window.title("Disliked Song")
-        disliked_window.configure(bg="#272829")
+        # Create a new suggestions window with only one song
+        new_suggestions_window = Toplevel(self.root)
+        new_suggestions_window.title("Music Suggestions")
+        new_suggestions_window.configure(bg="#272829")
+        new_suggestions_window.resizable(False, False)
 
-        image = Image.open(requests.get(song[2], stream=True).raw)
-        thumbnail_image = ImageTk.PhotoImage(image)
+        suggestions_frame = ttk.Frame(new_suggestions_window)
+        suggestions_frame.pack(padx=10, pady=10)
 
-        thumbnail_label = Label(disliked_window, image=thumbnail_image)
-        thumbnail_label.pack(pady=10)
+        exit_button = ttk.Button(suggestions_frame, text="Exit", command=new_suggestions_window.destroy)
+        exit_button.grid(row=5, column=1, padx=10, pady=10)
 
-        title_label = ttk.Label(disliked_window, text=song[1], font=("Arial", 12), foreground="white", background="#272829")
-        title_label.pack(pady=10)
+        # Suggest a new random song for the new window
+        self.suggest_random_song(suggestions_frame)
 
-        dislike_message = ttk.Label(disliked_window, text="You disliked this song.", font=("Arial", 12), foreground="red", background="#272829")
-        dislike_message.pack(pady=10)
+    def suggest_random_song(self, suggestions_frame):
+        # Check if there are remaining songs in the playlist
+        if self.video_data:
+            # Suggest a new random song
+            random_index = random.randint(0, len(self.video_data) - 1)
+            random_song = self.video_data[random_index]
 
-        close_button = ttk.Button(disliked_window, text="Close", command=disliked_window.destroy)
-        close_button.pack(pady=10)
+            # Display the new suggestion in the new suggestions window
+            self.show_random_song_suggestion(suggestions_frame, random_song)
+        else:
+            # Handle case when there are no more songs in the playlist
+            self.show_error("No More Suggestions", "No more suggestions available.")
+
+    def show_random_song_suggestion(self, suggestions_frame, song):
+        # Display the new suggestion using the label or any other widget you want
+            image = Image.open(requests.get(song[2], stream=True).raw)
+            thumbnail_image = ImageTk.PhotoImage(image)
+            thumbnail_label = Label(suggestions_frame, image=thumbnail_image)
+            thumbnail_label.grid(row=1, column=0, padx=10, pady=5)
+            thumbnail_label.image = thumbnail_image
+
+            # Add a "Play" button for the newly suggested song
+            play_button = ttk.Button(suggestions_frame, text="Play", command=lambda: self.play_video(song))
+            play_button.grid(row=2, column=0, padx=10, pady=5)
+            open_playlist_button = ttk.Button(suggestions_frame, text="Open Playlist", command=lambda : self.open_playlist(song))
+            open_playlist_button.grid(row=3, column=0, padx=10, pady=5)
 
     def play_video(self, index):
         if 0 <= index < len(self.video_data):
