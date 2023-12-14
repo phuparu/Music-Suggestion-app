@@ -223,7 +223,6 @@ class MusicSuggestionApp:
             # เพิ่มรหัสเพลงที่ไม่ถูกใจลงในรายการเพลงที่ผู้ใช้ไม่ถูกใจ
             self.disliked_songs.append(self.video_data[index])
 
-
     def play_video(self, index):
         if 0 <= index < len(self.video_data):
             webbrowser.open(f"https://www.youtube.com/watch?v={self.video_data[index][0]}")
