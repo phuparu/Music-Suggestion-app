@@ -53,12 +53,27 @@ class Greeter:
     def start_app(self):
         if self.root.winfo_exists():  # Check if the root window is still alive
             self.root.destroy()  # Close the Greeter window
-            app = Toplevel()  # Create a Toplevel window without a master
-            music_app = MusicSuggestionApp(app, self.api_key)
+            music_app_root = tk.Tk()
+            music_app = MusicSuggestionApp(music_app_root, self.api_key)
+            music_app_root.mainloop()
 
 
     def open_settings(self):
-        # Implement functionality to open settings here
+        settings_window = SettingsWindow(self.root)
+class SettingsWindow:
+    def __init__(self, parent):
+        self.parent = parent
+        self.settings_window = Toplevel(parent)
+        self.settings_window.title("Settings")
+        self.create_widgets()
+
+    def create_widgets(self):
+        # Add toggle dark mode button
+        toggle_dark_mode_button = Button(self.settings_window, text="Toggle Dark Mode", command=self.toggle_dark_mode)
+        toggle_dark_mode_button.pack(pady=10)
+
+    def toggle_dark_mode(self):
+        # Implement toggle dark mode logic here
         pass
 
 if __name__ == "__main__":
