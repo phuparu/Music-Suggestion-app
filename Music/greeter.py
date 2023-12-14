@@ -35,7 +35,7 @@ class Greeter:
         welcome_label.pack(padx=15, pady=15)
 
         # Load image from URL
-        image_url = "https://static.wikia.nocookie.net/marvelcinematicuniverse/images/9/94/Spider-Man_Red_and_Blue.jpg/revision/latest?cb=20220417141216"  # Replace with your actual image URL
+        image_url = "https://media.discordapp.net/attachments/1157646070248112239/1184938352324128788/futuristic_music_symbol_2.jpg?ex=658dcad6&is=657b55d6&hm=bc7b1e08ec8d482ea94ce9e52e73f65bcdaafea1a0b522efd220caa0a2793490&=&format=webp&width=671&height=671"  # Replace with your actual image URL
         response = requests.get(image_url)
         image_data = response.content
         img = Image.open(BytesIO(image_data))
