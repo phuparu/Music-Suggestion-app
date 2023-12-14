@@ -10,8 +10,9 @@ from PIL import Image, ImageTk
 import tkinter as tk
 
 class MusicSuggestionApp:
-    def __init__(self, root, DEVELOPER_KEY):
+    def __init__(self, root, DEVELOPER_KEY,dark_mode=False):
         self.root = root
+        self.dark_mode = dark_mode
         self.root.title("Music Suggestion App")
         self.create_gradient_background()
         self.root.resizable(False, False)
@@ -65,9 +66,11 @@ class MusicSuggestionApp:
         self.dark_mode = False  # Default mode is light mode
         style = ThemedStyle(self.root)
         self.style = style
-        self.update_theme()
+        
         mode_button = ttk.Button(main_frame, text="Toggle Dark Mode", command=self.toggle_dark_mode)
         mode_button.pack(pady=10)
+
+        self.update_theme()
 
 
     def create_gradient_background(self):
