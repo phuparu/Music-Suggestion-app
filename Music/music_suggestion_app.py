@@ -1,5 +1,4 @@
 import tkinter as tk
-from tkinter import NW
 from tkinter import ttk, Canvas, Label, Toplevel
 from ttkthemes import ThemedStyle
 import random
@@ -15,29 +14,27 @@ class MusicSuggestionApp:
         self.DEVELOPER_KEY = DEVELOPER_KEY
         self.dark_mode = dark_mode
 
+        self.song_label = Label(self.root, text="")
+        self.song_label.pack(pady=10)
+
         self.root.title("Music Suggestion App")
         self.create_gradient_background()
         self.root.resizable(False, False)
 
-        # Configure the window dimensions
         window_width = 500
         window_height = 500
-
-        # Center the window
         screen_width = root.winfo_screenwidth()
         screen_height = root.winfo_screenheight()
         x = (screen_width - window_width) // 2
         y = (screen_height - window_height) // 2
         self.root.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
-        # Create a themed style for the app
         self.style = ThemedStyle(self.root)
         self.update_theme()
 
         main_frame = ttk.Frame(self.root)
         main_frame.pack(expand=True, fill="both", padx=35, pady=35)
 
-        # Create a sub-frame to center the main content
         center_frame = ttk.Frame(main_frame)
         center_frame.pack(expand=True, pady=20)
 
@@ -64,7 +61,6 @@ class MusicSuggestionApp:
         
         self.liked_songs = []
         self.disliked_songs = []
-            # กรองเพลงที่ถูกใจและไม่ถูกใจ
         style = ThemedStyle(self.root)
         self.style = style
         
@@ -73,23 +69,19 @@ class MusicSuggestionApp:
 
         self.update_theme()
 
-
     def create_gradient_background(self):
-        # Define the gradient colors
         start_color = "#A0C3FF"  # Pastel Blue
         end_color = "#FFC3A0"    # Pastel Pink
 
         gradient_canvas = Canvas(self.root, width=800, height=600)
-        gradient_canvas.place(relx=0, rely=0, anchor=NW)
+        gradient_canvas.place(relx=0, rely=0, anchor=tk.NW)
 
         for i in range(600):
-            # Calculate the color at this position along the gradient
             r = int(int(start_color[1:3], 16) + (int(end_color[1:3], 16) - int(start_color[1:3], 16)) * (i / 600))
             g = int(int(start_color[3:5], 16) + (int(end_color[3:5], 16) - int(start_color[3:5], 16)) * (i / 600))
             b = int(int(start_color[5:7], 16) + (int(end_color[5:7], 16) - int(start_color[5:7], 16)) * (i / 600))
 
             color = f"#{r:02X}{g:02X}{b:02X}"
-
             gradient_canvas.create_line(0, i, 800, i, fill=color)
 
     def suggest_music(self):
@@ -136,13 +128,13 @@ class MusicSuggestionApp:
             playlist_items_response = self.youtube.playlistItems().list(**playlist_items_params).execute()
             videos = playlist_items_response.get('items', [])
             self.video_data = [
-    (
-        video['snippet']['resourceId']['videoId'],
-        video['snippet']['title'],
-        video['snippet']['thumbnails'].get('default', {}).get('url', 'default_url_placeholder')
-    ) 
-    for video in videos
-]
+                (
+                    video['snippet']['resourceId']['videoId'],
+                    video['snippet']['title'],
+                    video['snippet']['thumbnails'].get('default', {}).get('url', 'default_url_placeholder')
+                ) 
+                for video in videos
+            ]
 
             random.shuffle(self.video_data)
 
@@ -191,15 +183,10 @@ class MusicSuggestionApp:
             thumbnail_label.grid(row=0, column=i, padx=10, pady=5)
             thumbnail_label.image = thumbnail_image
 
-            # Add like and dislike buttons
-            like_button = ttk.Button(suggestions_frame, text="Like", command=lambda i=i: self.like_song(i))
-            like_button.grid(row=3, column=i, padx=10, pady=5)
-
             dislike_button = ttk.Button(suggestions_frame, text="Dislike", command=lambda i=i: self.dislike_song(i))
             dislike_button.grid(row=3, column=i, padx=10, pady=5)
 
-            # Add an exit button at the middle of the pop-up window
-            exit_button = ttk.Button(suggestions_frame, text="Exit", command=self.exit_suggestions_window)
+            exit_button = ttk.Button(suggestions_frame, text="Exit", command=suggestions_window.destroy)
             exit_button.grid(row=5, column=1, padx=10, pady=10)
 
     def toggle_dark_mode(self):
@@ -211,19 +198,31 @@ class MusicSuggestionApp:
         self.style.set_theme(theme_name)
         self.root.configure(bg="#272829" if self.dark_mode else "white")
 
-    def exit_suggestions_window(self):
-        self.root.destroy()
-
-    def like_song(self, index):
-        if 0 <= index < len(self.video_data):
-            # เพิ่มรหัสเพลงที่ถูกใจลงในรายการเพลงที่ผู้ใช้ถูกใจ
-            self.liked_songs.append(self.video_data[index])
-
     def dislike_song(self, index):
         if 0 <= index < len(self.video_data):
-            # เพิ่มรหัสเพลงที่ไม่ถูกใจลงในรายการเพลงที่ผู้ใช้ไม่ถูกใจ
-            self.disliked_songs.append(self.video_data[index])
+            disliked_song = self.video_data.pop(index)
+            self.open_disliked_song_window(disliked_song)
+            self.suggest_random_song()
 
+    def open_disliked_song_window(self, song):
+        disliked_window = Toplevel(self.root)
+        disliked_window.title("Disliked Song")
+        disliked_window.configure(bg="#272829")
+
+        image = Image.open(requests.get(song[2], stream=True).raw)
+        thumbnail_image = ImageTk.PhotoImage(image)
+
+        thumbnail_label = Label(disliked_window, image=thumbnail_image)
+        thumbnail_label.pack(pady=10)
+
+        title_label = ttk.Label(disliked_window, text=song[1], font=("Arial", 12), foreground="white", background="#272829")
+        title_label.pack(pady=10)
+
+        dislike_message = ttk.Label(disliked_window, text="You disliked this song.", font=("Arial", 12), foreground="red", background="#272829")
+        dislike_message.pack(pady=10)
+
+        close_button = ttk.Button(disliked_window, text="Close", command=disliked_window.destroy)
+        close_button.pack(pady=10)
 
     def play_video(self, index):
         if 0 <= index < len(self.video_data):
