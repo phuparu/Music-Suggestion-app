@@ -7,7 +7,7 @@ import requests
 from ttkthemes import ThemedStyle
 
 class Greeter:
-    def __init__(self, root, api_key):
+    def __init__(self, root, api_key,dark_mode=False):
         self.root = root
         self.api_key = api_key
         self.dark_mode = False  # Default mode is light mode
@@ -31,7 +31,7 @@ class Greeter:
         self.update_theme()
 
         # Create a welcome message with an image from URL
-        welcome_label = Label(self.root, text="Welcome to the Music Suggestion App!", font=("Arial", 14))
+        welcome_label = Label(self.root, text="Welcome to the Music Suggestion App!", font=("Arial", 14),bg="white")
         welcome_label.pack(padx=15, pady=15)
 
         # Load image from URL
@@ -71,6 +71,9 @@ class Greeter:
         theme_name = "radiance" if not self.dark_mode else "equilux"
         self.style.set_theme(theme_name)
         self.root.configure(bg="#272829" if self.dark_mode else "white")
+        for widget in self.root.winfo_children():
+            if isinstance(widget, Label) and widget.cget("text") == "Welcome to the Music Suggestion App!":
+                widget.configure(fg="white",bg="#272829")
 
 if __name__ == "__main__":
     root = tk.Tk()
