@@ -1,5 +1,6 @@
-from tkinter import *
-from tkinter import ttk
+import tkinter as tk
+from tkinter import NW
+from tkinter import ttk, Canvas, Label, Toplevel
 from ttkthemes import ThemedStyle
 import random
 import webbrowser
@@ -7,12 +8,13 @@ import googleapiclient.discovery
 import googleapiclient.errors
 import requests
 from PIL import Image, ImageTk
-import tkinter as tk
 
 class MusicSuggestionApp:
-    def __init__(self, root, DEVELOPER_KEY,dark_mode=False):
+    def __init__(self, root, DEVELOPER_KEY, dark_mode=False):
         self.root = root
+        self.DEVELOPER_KEY = DEVELOPER_KEY
         self.dark_mode = dark_mode
+
         self.root.title("Music Suggestion App")
         self.create_gradient_background()
         self.root.resizable(False, False)
@@ -28,8 +30,9 @@ class MusicSuggestionApp:
         y = (screen_height - window_height) // 2
         self.root.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
-        style = ThemedStyle(self.root)
-        style.set_theme("radiance")
+        # Create a themed style for the app
+        self.style = ThemedStyle(self.root)
+        self.update_theme()
 
         main_frame = ttk.Frame(self.root)
         main_frame.pack(expand=True, fill="both", padx=35, pady=35)
@@ -62,8 +65,6 @@ class MusicSuggestionApp:
         self.liked_songs = []
         self.disliked_songs = []
             # กรองเพลงที่ถูกใจและไม่ถูกใจ
-
-        self.dark_mode = False  # Default mode is light mode
         style = ThemedStyle(self.root)
         self.style = style
         
@@ -195,7 +196,7 @@ class MusicSuggestionApp:
             like_button.grid(row=3, column=i, padx=10, pady=5)
 
             dislike_button = ttk.Button(suggestions_frame, text="Dislike", command=lambda i=i: self.dislike_song(i))
-            dislike_button.grid(row=4, column=i, padx=10, pady=5)
+            dislike_button.grid(row=3, column=i, padx=10, pady=5)
 
             # Add an exit button at the middle of the pop-up window
             exit_button = ttk.Button(suggestions_frame, text="Exit", command=self.exit_suggestions_window)
@@ -209,9 +210,6 @@ class MusicSuggestionApp:
         theme_name = "radiance" if not self.dark_mode else "equilux"
         self.style.set_theme(theme_name)
         self.root.configure(bg="#272829" if self.dark_mode else "white")
-        # Update other widgets' colors, fonts, etc. based on the theme
-        # ...
-
 
     def exit_suggestions_window(self):
         self.root.destroy()

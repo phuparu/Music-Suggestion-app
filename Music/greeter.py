@@ -59,8 +59,8 @@ class Greeter:
     def start_app(self):
         if self.root.winfo_exists():
             self.root.withdraw()
-            app = Toplevel() 
-            music_app = MusicSuggestionApp(app, self.api_key,dark_mode=self.dark_mode)
+            app = Toplevel()
+            music_app = MusicSuggestionApp(app, self.api_key, dark_mode=self.dark_mode)
             
 
     def toggle_dark_mode(self):
@@ -68,12 +68,15 @@ class Greeter:
         self.update_theme()
 
     def update_theme(self):
-        theme_name = "radiance" if not self.dark_mode else "equilux"
-        self.style.set_theme(theme_name)
         self.root.configure(bg="#272829" if self.dark_mode else "white")
+
+        target_text = "Welcome to the Music Suggestion App!"
+
         for widget in self.root.winfo_children():
-            if isinstance(widget, Label) and widget.cget("text") == "Welcome to the Music Suggestion App!":
-                widget.configure(fg="white",bg="#272829")
+            if isinstance(widget, Label) and target_text in widget.cget("text"):
+                current_fg_color = widget.cget("fg")
+                new_fg_color = "white" if current_fg_color != "white" else "black"
+                widget.configure(fg=new_fg_color, bg="#272829" if self.dark_mode else "white")
 
 if __name__ == "__main__":
     root = tk.Tk()
