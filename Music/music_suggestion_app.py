@@ -187,8 +187,9 @@ class MusicSuggestionApp:
             dislike_button = ttk.Button(suggestions_frame, text="Dislike", command=lambda i=i: self.dislike_song(i))
             dislike_button.grid(row=3, column=i, padx=10, pady=5)
 
-            exit_button = ttk.Button(suggestions_frame, text="Exit", command=suggestions_window.destroy)
-            exit_button.grid(row=5, column=1, padx=10, pady=10)
+            exit_button = ttk.Button(suggestions_frame, text="Exit", command=lambda: suggestions_frame.master.destroy())
+            exit_button.grid(row=4, column=1, padx=10, pady=10)
+                
 
     def toggle_dark_mode(self):
         self.dark_mode = not self.dark_mode
@@ -210,9 +211,6 @@ class MusicSuggestionApp:
         suggestions_frame = ttk.Frame(new_suggestions_window)
         suggestions_frame.pack(padx=10, pady=10)
 
-        exit_button = ttk.Button(suggestions_frame, text="Exit", command=new_suggestions_window.destroy)
-        exit_button.grid(row=5, column=1, padx=10, pady=10)
-
         # Suggest a new random song for the new window
         self.suggest_random_song(suggestions_frame)
 
@@ -220,7 +218,7 @@ class MusicSuggestionApp:
         # Check if there are remaining songs in the playlist
         if self.video_data:
             # Suggest a new random song
-            random_index = random.randint(0, len(self.video_data) - 1)
+            random_index = random.randint(3, len(self.video_data) - 1)
             random_song = self.video_data[random_index]
 
             # Display the new suggestion in the new suggestions window
@@ -249,6 +247,9 @@ class MusicSuggestionApp:
         thumbnail_label = Label(suggestions_frame, image=thumbnail_image)
         thumbnail_label.grid(row=0, column=0, padx=10, pady=5)
         thumbnail_label.image = thumbnail_image
+
+        exit_button = ttk.Button(suggestions_frame, text="Exit", command=lambda: suggestions_frame.master.destroy())
+        exit_button.grid(row=3, column=0, padx=10, pady=10)
 
     def play_video(self, index):
         if 0 <= index < len(self.video_data):
