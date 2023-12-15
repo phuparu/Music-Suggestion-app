@@ -237,10 +237,10 @@ class MusicSuggestionApp:
         video_title = song[1]
         video_thumbnail_url = song[2]
 
-        play_button = ttk.Button(suggestions_frame, text=f"Play : {video_title}", command=lambda: self.play_video(song))
+        play_button = ttk.Button(suggestions_frame, text=f"Play : {video_title}", command=lambda: self.new_play_video(song))
         play_button.grid(row=1, column=0, padx=10, pady=5)
 
-        open_playlist_button = ttk.Button(suggestions_frame, text=f"Open Playlist : {video_title}", command=lambda: self.open_playlist(song))
+        open_playlist_button = ttk.Button(suggestions_frame, text=f"Open Playlist : {video_title}", command=lambda: self.new_open_playlist(song))
         open_playlist_button.grid(row=2, column=0, padx=10, pady=5)
 
         image = Image.open(requests.get(video_thumbnail_url, stream=True).raw)
