@@ -69,7 +69,6 @@ class MusicSuggestionApp:
         mode_button = ttk.Button(main_frame, text="Toggle Dark Mode", command=self.toggle_dark_mode)
         mode_button.pack(pady=10)
 
-
     def create_gradient_background(self):
         # Define the gradient colors
         start_color = "#A0C3FF"  # Pastel Blue
@@ -206,9 +205,6 @@ class MusicSuggestionApp:
         theme_name = "radiance" if not self.dark_mode else "equilux"
         self.style.set_theme(theme_name)
         self.root.configure(bg="#272829" if self.dark_mode else "white")
-        # Update other widgets' colors, fonts, etc. based on the theme
-        # ...
-
 
     def exit_suggestions_window(self):
         self.root.destroy()
